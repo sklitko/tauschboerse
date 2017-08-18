@@ -1,11 +1,12 @@
 <template>
   <div class="container-fluid">
-    <div class="col-xs-12">
+    <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12 nopadding">
       <div class="filtering">
       <h1>Filter</h1>
         <div class="form-group">
           <label for="search" class="search-label">Search</label>
-          <input type="text" id="search">
+          <input type="text" id="search" v-model="search" autofocus>
         </div>
           <div class="form-group">
             <label for="category">Category</label>
@@ -15,13 +16,18 @@
           <label for="location">Category</label>
           <b-form-select id="location" v-model="selected_loc" :options="location" ></b-form-select>
         </div>
+
       </div>
 
-      <div class="list">
-        <ul>
-          <li v-for="feed in feedData.data">{{feed.number}}</li>
-        </ul>
+      <div class="list" v-for="feed in filteredTitle">
+          <h6>Nr: {{feed.number}} from {{feed.date}}</h6> <span class="cat">{{feed.category}}</span>
+        <br>
+        <h5>{{feed.title}}</h5>
+        <h6>{{feed.description}}</h6>
+        <h6>{{feed.location}}</h6>
+          <b-button>CONTACT</b-button>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -33,6 +39,7 @@ export default {
   name: 'list',
   data() {
     return {
+      search: '',
       selected_cat: null,
       category: [
         { value: null, text: '--select--' },
@@ -50,10 +57,17 @@ export default {
       ],
       feedData
     }
+  },
+  computed: {
+    filteredTitle: function () {
+      return this.feedData.data.filter(function (feed) {
+          return feed.title.indexOf(this.search) !== -1;
+      }.bind(this))
+    }
   }
 }
 
-console.log(feedData.data);
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -65,5 +79,16 @@ console.log(feedData.data);
   padding: 20px;
 }
 
+.nopadding {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+  .list {
+    margin-top: 10px;
+    padding: 20px;
+    background-color: antiquewhite;
+    color: sandybrown;
+  }
 
 </style>
