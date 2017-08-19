@@ -13,13 +13,16 @@
             <b-form-select id="category" v-model="selected_cat" :options="category" ></b-form-select>
           </div>
         <div class="form-group">
-          <label for="location">Category</label>
+          <label for="location">Location</label>
           <b-form-select id="location" v-model="selected_loc" :options="location" ></b-form-select>
         </div>
 
       </div>
+    </div>
+    </div>
+      <div class="row">
 
-      <div class="list" v-for="feed in filteredTitle">
+      <div class="list col-md-4 col-sm-4 col-xs-12" v-for="feed in filteredData">
           <h6>Nr: {{feed.number}} from {{feed.date}}</h6> <span class="cat">{{feed.category}}</span>
         <br>
         <h5>{{feed.title}}</h5>
@@ -27,7 +30,6 @@
         <h6>{{feed.location}}</h6>
           <b-button>CONTACT</b-button>
       </div>
-    </div>
     </div>
   </div>
 </template>
@@ -40,15 +42,15 @@ export default {
   data() {
     return {
       search: '',
-      selected_cat: null,
+      selected_cat: '',
       category: [
-        { value: null, text: '--select--' },
+        { value: '', text: '--select--' },
         { value: 'Search', text: 'Search' },
         { value: 'Gift', text: 'Gift' }
       ],
-      selected_loc: null,
+      selected_loc: '',
       location: [
-        { value: null, text: '--select--'},
+        { value: '', text: '--select--'},
         { value: 'Point A', text: 'Point A'},
         { value: 'Point B', text: 'Point B'},
         { value: 'Point C', text: 'Point C'},
@@ -59,10 +61,13 @@ export default {
     }
   },
   computed: {
-    filteredTitle: function () {
+    filteredData: function () {
+
       return this.feedData.data.filter(function (feed) {
-          return feed.title.indexOf(this.search) !== -1;
-      }.bind(this))
+
+        return feed.title.toUpperCase().indexOf(this.search.toUpperCase()) !== -1 && feed.category.indexOf(this.selected_cat) !== -1 && feed.location.indexOf(this.selected_loc) !== -1;
+      }.bind(this));
+
     }
   }
 }
