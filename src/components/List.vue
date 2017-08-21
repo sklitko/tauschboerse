@@ -5,30 +5,41 @@
       <div class="filtering">
       <h1>Filter</h1>
         <div class="form-group">
-          <label for="search" class="search-label">Search</label>
-          <input type="text" id="search" v-model="search" autofocus>
+          <label>Search</label>
+          <input type="text" id="search" class="search" v-model="search" autofocus placeholder="Search text...">
         </div>
           <div class="form-group">
-            <label for="category">Category</label>
-            <b-form-select id="category" v-model="selected_cat" :options="category" ></b-form-select>
+            <label>Category</label>
+            <select name="selected_cat" id="category" class="select" v-model="selected_cat">
+              <option v-for="option in category" :value="option.value">{{option.text}}</option>
+            </select>
           </div>
         <div class="form-group">
-          <label for="location">Location</label>
-          <b-form-select id="location" v-model="selected_loc" :options="location" ></b-form-select>
+          <label>Location</label>
+          <select name="location" id="location" class="select" v-model="selected_loc">
+            <option v-for="option in location" :value="option.value">{{option.text}}</option>
+          </select>
         </div>
-
+        <button type="button" class="btn btn-warning btn-filter float-right" v-on:click="filtered" >APPLY FILTER</button>
       </div>
     </div>
     </div>
       <div class="row">
 
-      <div class="list col-md-4 col-sm-4 col-xs-12" v-for="feed in filteredData">
-          <h6>Nr: {{feed.number}} from {{feed.date}}</h6> <span class="cat">{{feed.category}}</span>
-        <br>
-        <h5>{{feed.title}}</h5>
-        <h6>{{feed.description}}</h6>
-        <h6>{{feed.location}}</h6>
-          <b-button>CONTACT</b-button>
+      <div class="col-md-3 col-sm-6 col-xs-12" v-for="feed in filteredData">
+        <div class="list">
+          <div class="list_head">
+            <p class="list_title">Nr.{{feed.number}} from {{feed.date}}</p> <span class="cat">{{feed.category}}</span>
+          </div>
+          <div class="list_body">
+            <p class="list_body_title">{{feed.title}}</p>
+            <p class="list_body_desc">{{feed.description}}</p>
+            <p class="list_body_loc"><i class="fa fa-map-marker"></i><strong> Location: {{feed.location}}</strong></p>
+          </div>
+           <div class="list_actions">
+             <button type="button" class="btn btn-link btn-contact" >CONTACT</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -57,17 +68,25 @@ export default {
         { value: 'Point D', text: 'Point D'},
         { value: 'Point E', text: 'Point E'},
       ],
-      feedData
+      feedData,
+      search_text: '',
+      selected_category: '',
+      selected_location: ''
     }
   },
   computed: {
     filteredData: function () {
-
       return this.feedData.data.filter(function (feed) {
-
-        return feed.title.toUpperCase().indexOf(this.search.toUpperCase()) !== -1 && feed.category.indexOf(this.selected_cat) !== -1 && feed.location.indexOf(this.selected_loc) !== -1;
+        return feed.title.toUpperCase().indexOf(this.search_text.toUpperCase()) !== -1 && feed.category.indexOf(this.selected_category) !== -1 && feed.location.indexOf(this.selected_location) !== -1;
       }.bind(this));
 
+    }
+  },
+  methods: {
+    filtered: function () {
+      this.search_text = this.search;
+      this.selected_category = this.selected_cat;
+      this.selected_location = this.selected_loc;
     }
   }
 }
@@ -79,21 +98,96 @@ export default {
 <style>
 
 .filtering {
-  background-color: sandybrown;
+  background-color: #3b3936;
   color: #fff;
   padding: 20px;
+  float: left;
+  width: 100%;
 }
 
-.nopadding {
-  padding: 0 !important;
-  margin: 0 !important;
+label {
+  width: 100%;
+  font-size: 10px;
+  color: grey;
+  margin-bottom: 0;
 }
+
+.search {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: 0;
+  color: #fff;
+}
+
+
+
+.select {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid #ccc;
+  color: #fff;
+  padding: 5px 0;
+  position: relative;
+  outline: 0;
+}
+
+.select option {
+  color: #000;
+  border: none;
+}
+
+.btn-filter {
+  background-color: #fc7e00;
+  border: none;
+  border-radius: 2px;
+
+}
+
 
   .list {
-    margin-top: 10px;
+    margin-top: 15px;
     padding: 20px;
-    background-color: antiquewhite;
-    color: sandybrown;
+    background-color: #f2ede6;
+    color: #706b66;
+    float: left;
   }
+
+
+  .list_head, .list_body, .list_actions {
+    width: 100%;
+    float: left;
+  }
+
+.list_title {
+  float: left;
+}
+
+.cat {
+  float: right;
+  background-color: #3b3936;
+  color: #fff;
+  padding: 1px 5px;
+  font-size: 12px;
+  border-radius: 2px;
+}
+
+  .list_body {
+    margin-top: 20px;
+  }
+
+.list_body_desc {
+  margin-bottom: 0;
+}
+
+.btn-contact, .btn-contact:hover  {
+  color: #fc7e00;
+  border-top: 2px solid #fc7e00;
+  padding-left: 0;
+  text-decoration: none;
+}
 
 </style>
