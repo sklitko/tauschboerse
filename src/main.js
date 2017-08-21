@@ -8,6 +8,7 @@ import router from './router'
 import 'bootstrap/dist/css/bootstrap.css';
 
 Vue.use(VueResource);
+
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */

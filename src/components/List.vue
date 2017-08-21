@@ -1,7 +1,7 @@
-<template>
+<template id="modal-template">
   <div class="container-fluid">
     <div class="row">
-    <div class="col-md-12 col-sm-12 col-xs-12 nopadding">
+    <div class="col-md-12 col-sm-12 col-12">
       <div class="filtering">
       <h1>Filter</h1>
         <div class="form-group">
@@ -26,7 +26,7 @@
     </div>
       <div class="row">
 
-      <div class="col-md-3 col-sm-6 col-xs-12" v-for="feed in filteredData">
+      <div class="col-md-3 col-sm-6 col-12" v-for="feed in filteredData">
         <div class="list">
           <div class="list_head">
             <p class="list_title">Nr.{{feed.number}} from {{feed.date}}</p> <span class="cat">{{feed.category}}</span>
@@ -37,21 +37,54 @@
             <p class="list_body_loc"><i class="fa fa-map-marker"></i><strong> Location: {{feed.location}}</strong></p>
           </div>
            <div class="list_actions">
-             <button type="button" class="btn btn-link btn-contact" >CONTACT</button>
+             <button type="button" class="btn btn-link btn-contact" @click="openModal()">CONTACT</button>
           </div>
         </div>
       </div>
     </div>
+    <modal v-if="showModal">
+          <h3 slot="header" class="modal-title">
+            Modal title
+          </h3>
+          <div slot="body">
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" class="form-control" v-model="contact.name" required>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" v-model="contact.email" required>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-control" v-model="contact.description" required></textarea>
+            </div>
+          </div>
+          <div slot="footer">
+            <button type="button" class="btn btn-outline-info" @click="closeModal()"> Close </button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal" @click="submitAndClose()">
+              SEND
+            </button>
+          </div>
+    </modal>
   </div>
 </template>
 
+
+
 <script>
   import feedData from '../feed.json';
+  import Modal from './Modal'
 
 export default {
   name: 'list',
   data() {
     return {
+      contact: {
+        name: '',
+        email: '',
+        description: ''
+      },
       search: '',
       selected_cat: '',
       category: [
@@ -71,7 +104,8 @@ export default {
       feedData,
       search_text: '',
       selected_category: '',
-      selected_location: ''
+      selected_location: '',
+      showModal: false
     }
   },
   computed: {
@@ -87,11 +121,26 @@ export default {
       this.search_text = this.search;
       this.selected_category = this.selected_cat;
       this.selected_location = this.selected_loc;
+    },
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
+    submitAndClose() {
+      this.showModal = false;
+      this.$http.post('http://localhost/contact', {
+        data: this.contact
+      }).then(function (data) {
+        console.log(data)
+      });
     }
+  },
+  components: {
+    Modal
   }
 }
-
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -147,14 +196,13 @@ label {
 
 }
 
-
-  .list {
-    margin-top: 15px;
+.list {
+   margin-top: 15px;
     padding: 20px;
     background-color: #f2ede6;
     color: #706b66;
     float: left;
-  }
+}
 
 
   .list_head, .list_body, .list_actions {

@@ -98,7 +98,7 @@ export default {
       }).then(function (data) {
         console.log(data)
       });
-      console.log(form-create)
+
     }
   }
 }
